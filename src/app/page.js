@@ -242,12 +242,15 @@ function StrengthIcon({ type }) {
 
 /* ============================================================
    NAVBAR
+   Desktop (md and up): original navbar
+   Mobile: logo + CV row, with a swipeable tab bar underneath
    ============================================================ */
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("home");
   const lockRef = useRef(false);
+  const tabsRef = useRef(null);
   const { hero, sections } = useContent();
   const items = buildNavItems(sections?.items);
   const idsKey = items.map((item) => item.href).join("|");
@@ -293,6 +296,20 @@ function Navbar() {
     };
   }, [idsKey]);
 
+  // Mobile: keep the active tab centered in the swipe bar
+  useEffect(() => {
+    const box = tabsRef.current;
+    if (!box) return;
+
+    const el = box.querySelector(`[data-tab="${active}"]`);
+    if (!el) return;
+
+    box.scrollTo({
+      left: el.offsetLeft - box.clientWidth / 2 + el.clientWidth / 2,
+      behavior: "smooth",
+    });
+  }, [active]);
+
   const goTo = (e, href) => {
     const id = href.slice(1);
     const el = document.getElementById(id);
@@ -312,17 +329,91 @@ function Navbar() {
     }, 900);
   };
 
+  const cvButton = (
+    <a
+      href={hero.cvUrl}
+      download
+      aria-label="Download CV"
+      className="inline-flex min-h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-[#151413] px-3 py-1.5 font-serif text-xs font-bold !text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-black"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="h-3.5 w-3.5 shrink-0 !text-white"
+        aria-hidden="true"
+      >
+        <path d="M12 3v12M7 11l5 5 5-5M4 20h16" />
+      </svg>
+      <span className="!text-white">{hero.cvLabel}</span>
+    </a>
+  );
+
+  const logo = (
+    <a
+      href="#home"
+      onClick={(e) => goTo(e, "#home")}
+      className="flex shrink-0 items-center gap-1 whitespace-nowrap font-serif text-xl font-bold text-[#8B1026] sm:text-2xl"
+    >
+      <span className="text-lg font-normal">&lt;</span>
+      <span className="italic">Ahmed Elhossary</span>
+      <span className="text-lg font-normal">/&gt;</span>
+    </a>
+  );
+
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 border-b text-[#8B1026] transition-all duration-300 ${
         scrolled
           ? "border-[#8B1026]/20 bg-[#F2EEE3]/95 shadow-sm backdrop-blur-md"
-          : "border-transparent bg-transparent"
+          : "border-[#8B1026]/10 bg-[#F2EEE3]/95 backdrop-blur-md md:border-transparent md:bg-transparent md:backdrop-blur-none"
       }`}
     >
+      {/* ===== MOBILE: logo row + swipeable tab bar ===== */}
+      <div className="md:hidden">
+        <div className="flex items-center justify-between gap-3 px-4 pb-1 pt-3">
+          {logo}
+          {cvButton}
+        </div>
+
+        <nav aria-label="Main navigation">
+          <div
+            ref={tabsRef}
+            className="no-scrollbar flex snap-x snap-proximity items-center gap-2 overflow-x-auto scroll-smooth px-4 pb-2.5 pt-1.5"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
+            {items.map((item) => {
+              const isActive = active === item.href.slice(1);
+
+              return (
+                <a
+                  key={item.label}
+                  data-tab={item.href.slice(1)}
+                  href={item.href}
+                  onClick={(e) => goTo(e, item.href)}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`flex shrink-0 snap-center items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 font-serif text-sm font-bold transition-all duration-300 active:scale-95 ${
+                    isActive
+                      ? "bg-[#8B1026] !text-white shadow-md shadow-[#8B1026]/20"
+                      : "bg-[#8B1026]/[0.07] text-[#8B1026]"
+                  }`}
+                >
+                  <NavIcon type={item.icon} />
+                  {item.label}
+                </a>
+              );
+            })}
+          </div>
+        </nav>
+      </div>
+
+      {/* ===== DESKTOP: original navbar ===== */}
       <nav
         aria-label="Main navigation"
-        className="mx-auto flex min-h-[78px] max-w-[1600px] items-center justify-between gap-6 overflow-x-auto px-5 sm:px-8 lg:px-12"
+        className="mx-auto hidden min-h-[78px] max-w-[1600px] items-center justify-between gap-6 overflow-x-auto px-8 md:flex lg:px-12"
         style={{
           backgroundImage: scrolled
             ? "linear-gradient(rgba(139,16,38,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(139,16,38,0.035) 1px, transparent 1px)"
@@ -330,25 +421,15 @@ function Navbar() {
           backgroundSize: "30px 30px",
         }}
       >
-        <a
-          href="#home"
-          onClick={(e) => goTo(e, "#home")}
-          className="flex shrink-0 items-center gap-1 whitespace-nowrap font-serif text-xl font-bold text-[#8B1026] sm:text-2xl"
-        >
-          <span className="text-lg font-normal">&lt;</span>
-          <span className="italic">Ahmed Elhossary</span>
-          <span className="text-lg font-normal">/&gt;</span>
-        </a>
+        {logo}
 
-        <div className="flex shrink-0 items-center gap-5 font-serif text-sm font-bold sm:gap-6 lg:gap-7 lg:text-base">
+        <div className="flex shrink-0 items-center gap-6 font-serif text-sm font-bold lg:gap-7 lg:text-base">
           {items.map((item) => (
             <a
               key={item.label}
               href={item.href}
               onClick={(e) => goTo(e, item.href)}
-              aria-current={
-                active === item.href.slice(1) ? "page" : undefined
-              }
+              aria-current={active === item.href.slice(1) ? "page" : undefined}
               className={`relative flex shrink-0 items-center gap-2 py-3 transition-opacity duration-200 hover:opacity-60 after:absolute after:bottom-1 after:left-0 after:h-px after:w-full after:origin-left after:bg-[#8B1026] after:transition-transform after:duration-300 ${
                 active === item.href.slice(1)
                   ? "after:scale-x-100"
@@ -362,26 +443,7 @@ function Navbar() {
         </div>
 
         <div className="flex shrink-0 items-center gap-6">
-          <a
-            href={hero.cvUrl}
-            download
-            aria-label="Download CV"
-            className="inline-flex min-h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-[#151413] px-3 py-1.5 font-serif text-xs font-bold !text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-black"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-3.5 w-3.5 shrink-0 !text-white"
-              aria-hidden="true"
-            >
-              <path d="M12 3v12M7 11l5 5 5-5M4 20h16" />
-            </svg>
-            <span className="!text-white">{hero.cvLabel}</span>
-          </a>
+          {cvButton}
 
           <a
             href="#home"
@@ -1643,17 +1705,17 @@ export default function Home() {
 
   return (
     <ContentContext.Provider value={content}>
-    <main className="min-h-screen overflow-x-clip bg-[#F2EEE3] text-[#191817]">
-      <Navbar />
-      <Hero />
-      <SkillsTicker />
-      <About />
-      <Skills />
-      <SelectedWork />
-      <Journey />
-      <CustomSections />
-      <Contact />
-    </main>
+      <main className="min-h-screen overflow-x-clip bg-[#F2EEE3] text-[#191817]">
+        <Navbar />
+        <Hero />
+        <SkillsTicker />
+        <About />
+        <Skills />
+        <SelectedWork />
+        <Journey />
+        <CustomSections />
+        <Contact />
+      </main>
     </ContentContext.Provider>
   );
 }
