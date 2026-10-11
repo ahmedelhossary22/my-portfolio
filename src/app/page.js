@@ -365,6 +365,7 @@ function Navbar() {
   );
 
   return (
+    <>
     <header
       className={`fixed inset-x-0 top-0 z-50 border-b text-[#8B1026] transition-all duration-300 ${
         scrolled
@@ -372,42 +373,10 @@ function Navbar() {
           : "border-[#8B1026]/10 bg-[#F2EEE3]/95 backdrop-blur-md md:border-transparent md:bg-transparent md:backdrop-blur-none"
       }`}
     >
-      {/* ===== MOBILE: logo row + swipeable tab bar ===== */}
-      <div className="md:hidden">
-        <div className="flex items-center justify-between gap-3 px-4 pb-1 pt-3">
-          {logo}
-          {cvButton}
-        </div>
-
-        <nav aria-label="Main navigation">
-          <div
-            ref={tabsRef}
-            className="no-scrollbar flex snap-x snap-proximity items-center gap-2 overflow-x-auto scroll-smooth px-4 pb-2.5 pt-1.5"
-            style={{ WebkitOverflowScrolling: "touch" }}
-          >
-            {items.map((item) => {
-              const isActive = active === item.href.slice(1);
-
-              return (
-                <a
-                  key={item.label}
-                  data-tab={item.href.slice(1)}
-                  href={item.href}
-                  onClick={(e) => goTo(e, item.href)}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`flex shrink-0 snap-center items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 font-serif text-sm font-bold transition-all duration-300 active:scale-95 ${
-                    isActive
-                      ? "bg-[#8B1026] !text-white shadow-md shadow-[#8B1026]/20"
-                      : "bg-[#8B1026]/[0.07] text-[#8B1026]"
-                  }`}
-                >
-                  <NavIcon type={item.icon} />
-                  {item.label}
-                </a>
-              );
-            })}
-          </div>
-        </nav>
+      {/* ===== MOBILE: slim top bar (logo + CV). Tabs are at the bottom ===== */}
+      <div className="flex items-center justify-between gap-3 px-4 py-3 md:hidden">
+        {logo}
+        {cvButton}
       </div>
 
       {/* ===== DESKTOP: original navbar ===== */}
@@ -456,6 +425,53 @@ function Navbar() {
         </div>
       </nav>
     </header>
+
+    {/* ===== MOBILE: bottom icon tab bar (outside <header> because the header's
+        backdrop-filter would otherwise trap a fixed child) ===== */}
+    <nav
+      aria-label="Main navigation"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-[#8B1026]/20 bg-[#F2EEE3]/95 shadow-[0_-4px_16px_rgba(75,33,11,0.08)] backdrop-blur-md md:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
+      <div
+        ref={tabsRef}
+        className="no-scrollbar flex items-stretch overflow-x-auto"
+      >
+        {items.map((item) => {
+          const isActive = active === item.href.slice(1);
+
+          return (
+            <a
+              key={item.label}
+              data-tab={item.href.slice(1)}
+              href={item.href}
+              onClick={(e) => goTo(e, item.href)}
+              aria-label={item.label}
+              aria-current={isActive ? "page" : undefined}
+              className={`relative flex h-14 min-w-[56px] flex-1 items-center justify-center transition-colors duration-200 active:scale-90 [&_svg]:h-6 [&_svg]:w-6 ${
+                isActive ? "text-[#8B1026]" : "text-[#8B1026]/45"
+              }`}
+            >
+              {/* top indicator line, like the Facebook tab bar */}
+              <span
+                aria-hidden="true"
+                className={`absolute left-1/2 top-0 h-[3px] w-9 -translate-x-1/2 rounded-b-full bg-[#8B1026] transition-all duration-300 ${
+                  isActive ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
+                }`}
+              />
+              <span
+                className={`flex h-10 w-12 items-center justify-center rounded-xl transition-colors duration-200 ${
+                  isActive ? "bg-[#8B1026]/10" : ""
+                } ${isActive ? "[&_svg]:stroke-[2.3]" : ""}`}
+              >
+                <NavIcon type={item.icon} />
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </nav>
+    </>
   );
 }
 

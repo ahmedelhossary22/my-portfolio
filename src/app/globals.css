@@ -180,7 +180,7 @@ header {
 
 @media (max-width: 640px) {
   html {
-    scroll-padding-top: 112px;
+    scroll-padding-top: 76px;
   }
 
   #home h1 {
@@ -188,13 +188,21 @@ header {
   }
 
   #home {
-    scroll-margin-top: 112px;
+    scroll-margin-top: 76px;
   }
 
   #expertise,
   #work,
   #about,
   #contact {
-    scroll-margin-top: 112px;
+    scroll-margin-top: 76px;
+  }
+}
+
+/* Phones/tablets below md: leave room for the fixed bottom tab bar
+   so the footer is never hidden behind it */
+@media (max-width: 767px) {
+  footer#contact {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
   }
 }
