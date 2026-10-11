@@ -326,7 +326,7 @@ export const defaultContent = {
     meta: ["⌖ Cairo, Egypt", "⌁ Software Engineering", "© Graduating 2027"],
     photo: "/Ahmed Elhossary.jpeg",
     cvLabel: "Download CV",
-    cvUrl: "/Ahmed_Elhossary_CV.pdf",
+    cvUrl: "//Ahmed-Elhossary-CV.pdf",
   },
   ticker: {
     items: [
