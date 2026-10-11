@@ -1,0 +1,190 @@
+
+@import "tailwindcss";
+
+/* ========================================
+   1. BRAND COLORS & DESIGN TOKENS
+======================================== */
+
+:root {
+  --background: #F2EEE3;
+  --foreground: #191817;
+  --primary: #8B1026;
+  --accent: #A1343C;
+  --accent-hover: #8B1026;
+  --surface: #EAE2D5;
+  --surface-dark: #151413;
+  --border: #D8CCBC;
+  --muted: #71655C;
+  --text-light: #F2EEE3;
+
+  --font-main: Arial, Helvetica, sans-serif;
+}
+
+/* ========================================
+   2. TAILWIND THEME
+======================================== */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-main);
+}
+
+/* ========================================
+   3. GLOBAL RESET
+======================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-main);
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--primary);
+  color: #FFFFFF;
+}
+
+/* ========================================
+   4. ACCESSIBILITY
+======================================== */
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   5. FIXED NAVIGATION
+======================================== */
+
+header {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* ========================================
+   6. SKILLS TICKER
+======================================== */
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-\[marquee_28s_linear_infinite\] {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+
+.animate-\[marquee_28s_linear_infinite\]:hover {
+  animation-play-state: paused;
+}
+
+/* ========================================
+   7. PORTRAIT PRESENTATION
+======================================== */
+
+#home img {
+  object-position: center bottom;
+}
+
+/* ========================================
+   8. SECTION ALIGNMENT
+======================================== */
+
+#expertise,
+#work,
+#about,
+#contact {
+  scroll-margin-top: 90px;
+}
+
+/* ========================================
+   9. RESPONSIVE ADJUSTMENTS
+======================================== */
+
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 76px;
+  }
+
+  #home h1 {
+    overflow-wrap: normal;
+  }
+
+  #home {
+    scroll-margin-top: 76px;
+  }
+
+  #expertise,
+  #work,
+  #about,
+  #contact {
+    scroll-margin-top: 76px;
+  }
+}
