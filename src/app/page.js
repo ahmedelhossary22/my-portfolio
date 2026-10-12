@@ -702,11 +702,31 @@ function About() {
 }
 
 /* ============================================================
-   SKILLS
+   SKILLS  (with category filter)
    ============================================================ */
 
 function Skills() {
   const { skills } = useContent();
+  const [filter, setFilter] = useState("All");
+
+  const categories = skills.categories || [];
+  const totalCount = categories.reduce((sum, c) => sum + c.items.length, 0);
+
+  // If a category is renamed/removed from the dashboard, fall back to "All"
+  const activeFilter =
+    filter === "All" || categories.some((c) => c.title === filter)
+      ? filter
+      : "All";
+
+  const visibleCategories =
+    activeFilter === "All"
+      ? categories
+      : categories.filter((c) => c.title === activeFilter);
+
+  const filters = [
+    { label: "All", count: totalCount },
+    ...categories.map((c) => ({ label: c.title, count: c.items.length })),
+  ];
 
   return (
     <section
@@ -731,8 +751,45 @@ function Skills() {
           </p>
         </div>
 
-        <div className="mt-16 space-y-12">
-          {skills.categories.map((category) => (
+        {/* ===== Filter chips ===== */}
+        <div
+          role="tablist"
+          aria-label="Filter skills by category"
+          className="no-scrollbar -mx-5 mt-10 flex gap-2 overflow-x-auto px-5 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+        >
+          {filters.map((f) => {
+            const isActive = activeFilter === f.label;
+
+            return (
+              <button
+                key={f.label}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setFilter(f.label)}
+                className={`inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-xs font-bold tracking-[0.08em] transition-all duration-300 sm:text-sm ${
+                  isActive
+                    ? "border-[#8B1026] bg-[#8B1026] !text-white shadow-md shadow-[#8B1026]/20"
+                    : "border-[#8B1026]/25 bg-[#EAE2D5] text-[#8B1026] hover:-translate-y-0.5 hover:border-[#8B1026]/60"
+                }`}
+              >
+                <span className={isActive ? "!text-white" : ""}>{f.label}</span>
+                <span
+                  className={`rounded-full px-2 py-0.5 font-mono text-[10px] ${
+                    isActive
+                      ? "bg-white/20 !text-white"
+                      : "bg-[#8B1026]/10 text-[#8B1026]"
+                  }`}
+                >
+                  {f.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-10 space-y-12">
+          {visibleCategories.map((category) => (
             <div key={category.title}>
               <h3 className="mb-5 text-left text-sm font-bold tracking-[0.14em] text-[#8B1026] sm:text-base">
                 {category.title}
