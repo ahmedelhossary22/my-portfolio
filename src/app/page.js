@@ -72,6 +72,17 @@ const useContent = () => useContext(ContentContext);
 
 const pad = (n) => String(n).padStart(2, "0");
 
+// Texts set directly in code (**text** = bold). These override the dashboard
+// values for the hero description and the About paragraphs.
+const HERO_DESCRIPTION =
+  "Hi, I'm **Ahmed Elhossary**. I build practical digital solutions using Python, Flutter, machine learning, data analytics, and software engineering. My skills include mobile app development, data processing and visualization, computer vision, AI model development, API integration, and workflow automation to create efficient, scalable, and user-focused applications.";
+const ABOUT_PARAGRAPHS = [
+  "Hello, I'm **Ahmed Elhossary** — an AI Automation Engineer and Software Engineering professional interested in building practical, intelligent digital solutions.",
+  "My work spans machine learning, deep learning, computer vision, data analytics, and AI-powered automation. I enjoy turning data and emerging AI technologies into useful tools that solve real-world problems.",
+  "I specialize in building intelligent, end-to-end software solutions that combine Flutter mobile development, web applications, AI integration, and automation. My unique strength is connecting software engineering with data-driven intelligence to create practical, scalable applications that solve real-world problems and deliver meaningful user experiences.",
+  "Have an idea worth building? Let's turn it into a smart, scalable solution. **Let's work together!**"
+];
+
 // Stable anchor id for a section added from the dashboard
 const sectionId = (s, i) =>
   s.id ? String(s.id).replace(/[^a-zA-Z0-9_-]/g, "-") : `section-${i + 1}`;
@@ -503,8 +514,9 @@ function Hero() {
               <Lines text={h.titleAfter} />
             </h1>
 
-            <p className="mt-7 max-w-[680px] text-base leading-8 text-[#625953] sm:text-lg">
-              {h.description}
+            {/* **text** in the dashboard becomes bold (e.g. the name) */}
+            <p className="mt-7 max-w-[680px] text-base leading-8 text-[#625953] sm:text-lg [&_strong]:font-bold [&_strong]:text-[#211C19]">
+              <RichText text={HERO_DESCRIPTION} />
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -647,7 +659,7 @@ function About() {
 
           <div className="mt-6 h-1.5 w-20 rounded-full bg-[#8B1026]" />
 
-          {about.paragraphs.map((paragraph, i) => (
+          {ABOUT_PARAGRAPHS.map((paragraph, i) => (
             <p
               key={i}
               className={`${
@@ -657,6 +669,26 @@ function About() {
               <RichText text={paragraph} />
             </p>
           ))}
+
+          {/* Call to action */}
+          <div className="mt-9 flex flex-wrap gap-3">
+            <a
+              href="#contact"
+              className="group inline-flex min-h-[56px] items-center justify-center gap-5 rounded-xl bg-[#8B1026] px-6 py-4 text-sm font-semibold !text-white shadow-lg shadow-[#8B1026]/10 transition-all duration-300 hover:-translate-y-1 hover:bg-[#57101D]"
+            >
+              <span className="!text-white">Let&apos;s work together</span>
+              <span className="!text-white transition-transform duration-300 group-hover:translate-x-1">
+                ↗
+              </span>
+            </a>
+
+            <a
+              href="#work"
+              className="inline-flex min-h-[56px] items-center justify-center gap-5 rounded-xl border border-[#4B210B]/30 px-6 py-4 text-sm font-semibold text-[#4B210B] transition-all duration-300 hover:-translate-y-1 hover:border-[#8B1026] hover:bg-white/30"
+            >
+              View my projects <span>↓</span>
+            </a>
+          </div>
         </div>
 
         {/* Right column */}
